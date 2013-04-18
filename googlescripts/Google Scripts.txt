@@ -1,0 +1,169 @@
+//REGEX FOR MATCHING BAD MIDCONTENT
+\[Back to main page\][^)]*\).
+
+
+
+// Check if the link is a valid link
+
+
+function check_link( uri )
+{
+var response_code ;
+try {
+response_code = UrlFetchApp.fetch( uri ).getResponseCode().toString() ;
+}
+catch( error ) {
+response_code = error.toString().match( / returned code (\d\d\d)\./ )[1];
+}
+finally {
+return response_code ;
+}
+}
+
+
+//="attachment_"&round(column()/2+1)-9&if(right(Q1,3)="url","_title","_url")
+//  Decode a JSON attachment string into an 1D array of strings
+function jsondecode(jsonarg) {
+
+var what = "columns"; // "json" or "columns"
+var columnresponse = ["",""];
+  
+  try {
+      var jsonobject = Utilities.jsonParse(jsonarg);
+  
+    for (var i=0; i < jsonobject.length; i++)  {
+
+      if (what == "columns") 
+      {
+        
+      columnresponse [2 * i] = jsonobject[i].link.replace(/ /g,"%20");
+      columnresponse [2 * i +1] = jsonobject[i].title;
+      }
+      else
+      {
+      /* export non space %20-link json */          
+       jsonobject[i].link = encodeURI(jsonobject[i].link).replace(/%2520/g,"%20");;
+      }
+      
+    }
+  }
+           
+  
+    catch (error)
+    {
+     columnresponse[0] = "Ha sucker.";
+     jsonobject[i].title = "Ha sucker, you suck.";
+    }
+  
+  
+    finally
+    {
+      if (what == "columns")
+      {
+        return columnresponse; 
+      }
+      else
+      {
+      return Utilities.jsonStringify(jsonobject);
+      }
+    }
+  
+}  
+
+// Vertical merge for empty rows
+function VMergeRC() {          //Vertical Merge "REMOTE CONTROL for GDS"
+  
+  var maxw=l=0;
+  var minw=Number.MAX_VALUE;
+  var al=arguments.length ;
+  
+  //verify all arguments have proper width dimensions
+  for( i=0 ; i<al ; i++){
+    if( arguments[i].constructor == Array ) l=arguments[i][0].length ;
+    else if (arguments[i].length!=0) l = 1 ;  // literal values count as array with a width of one cell, empty cells are ignored!
+    maxw=l>maxw?l:maxw;
+    minw=l<minw?l:minw;
+  }
+  
+  //append each
+  if( maxw==minw) { /* when largest width equals smallest width all are equal */
+    var s = new Array();
+    for( i=0 ; i<al ; i++){
+      if( arguments[i].constructor == Array ) s = s.concat( arguments[i].slice() ) ;
+      else if (arguments[i].length!=0) s = s.concat( [[arguments[i]]] )  
+    }
+
+
+    var t = new Array();
+    var keepit = 0;
+    var c = 0;
+    al =s.length
+    
+    for (i=0; i<al; i++) {           // loop through the rows in s
+      t[c] = s[i] ;                  // add working row to t
+      c++;                           // increment t controller
+
+      for (j in s[i]) {              // loop through the columns in s[i]
+
+        if (s[i][j].length > 0) keepit++  ;    // length > 0  in any entry == we want to keep this row!
+    
+      }
+      
+      if (keepit == 0) {              // check if we want to keep? If so, decrement c controller to overwrite.
+        s[i][0] = "End of Data"       
+        c-- }
+     
+      keepit = 0 ;
+    }
+  if ( s.length == 0 ) return null ; else return t //s      
+  }
+  else return "#N/A: All data ranges must be of equal width!"      
+}
+
+
+
+/* Excel macro for combining data
+Sub stitch()
+
+Dim i As Long 'current row
+Dim j As Long 'first empty column
+Dim u As Long 'number of rows
+
+
+' Dim u2 As Long 'upper of source and output
+' Dim c As Long 'column of attachment
+' Dim temp As String ' to get rid of file bracket
+' Dim firstcol As Long
+
+u = ActiveSheet.UsedRange.Rows.Count
+i = 1 'header row, data in next row
+j = 9 'first empty column
+Cells(i, 3).Select
+
+Do While i < u
+    i = i + 1
+    ActiveSheet.Cells(i, 1).Select
+   
+   ' copy gear from next row to this one and delete next row, and decrement i
+    If ActiveSheet.Cells(i, 3).Value = ActiveSheet.Cells(i + 1, 3).Value Then
+        ActiveSheet.Cells(i, j).Value = ActiveSheet.Cells(i + 1, 6).Value
+        ActiveSheet.Cells(i, j + 1).Value = ActiveSheet.Cells(i + 1, 7).Value
+        ActiveSheet.Cells(i, j + 2).Value = ActiveSheet.Cells(i + 1, 8).Value
+ '       ActiveSheet.Cells(i, j + 2).Format = ActiveSheet.Cells(i + 1, 8).Format
+                
+        j = j + 3
+    
+        ActiveSheet.Cells(i + 1, 1).EntireRow.Select
+        Selection.Delete Shift:=xlUp
+        i = i - 1
+    Else
+    'start over on a new row
+        j = 9
+    End If
+
+Loop
+    
+End Sub
+
+
+*/
