@@ -1,0 +1,48 @@
+/* Excel macro for combining data
+/* Forgotten exactly what this is used for and where it came from.
+
+
+Sub stitch()
+
+Dim i As Long 'current row
+Dim j As Long 'first empty column
+Dim u As Long 'number of rows
+
+
+' Dim u2 As Long 'upper of source and output
+' Dim c As Long 'column of attachment
+' Dim temp As String ' to get rid of file bracket
+' Dim firstcol As Long
+
+u = ActiveSheet.UsedRange.Rows.Count
+i = 1 'header row, data in next row
+j = 9 'first empty column
+Cells(i, 3).Select
+
+Do While i < u
+    i = i + 1
+    ActiveSheet.Cells(i, 1).Select
+   
+   ' copy gear from next row to this one and delete next row, and decrement i
+    If ActiveSheet.Cells(i, 3).Value = ActiveSheet.Cells(i + 1, 3).Value Then
+        ActiveSheet.Cells(i, j).Value = ActiveSheet.Cells(i + 1, 6).Value
+        ActiveSheet.Cells(i, j + 1).Value = ActiveSheet.Cells(i + 1, 7).Value
+        ActiveSheet.Cells(i, j + 2).Value = ActiveSheet.Cells(i + 1, 8).Value
+ '       ActiveSheet.Cells(i, j + 2).Format = ActiveSheet.Cells(i + 1, 8).Format
+                
+        j = j + 3
+    
+        ActiveSheet.Cells(i + 1, 1).EntireRow.Select
+        Selection.Delete Shift:=xlUp
+        i = i - 1
+    Else
+    'start over on a new row
+        j = 9
+    End If
+
+Loop
+    
+End Sub
+
+
+*/

@@ -1,0 +1,15 @@
+// Check if the link is a valid link
+
+function check_link( uri )
+{
+var response_code ;
+try {
+response_code = UrlFetchApp.fetch( uri ).getResponseCode().toString() ;
+}
+catch( error ) {
+response_code = error.toString().match( / returned code (\d\d\d)\./ )[1];
+}
+finally {
+return response_code ;
+}
+}

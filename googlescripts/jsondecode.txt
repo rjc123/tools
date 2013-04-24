@@ -1,0 +1,47 @@
+//  Decode a JSON attachment string into an 1D array of strings
+function jsondecode(jsonarg) {
+
+var what = "columns"; // "json" or "columns"
+var columnresponse = ["",""];
+  
+  try {
+      var jsonobject = Utilities.jsonParse(jsonarg);
+  
+    for (var i=0; i < jsonobject.length; i++)  {
+
+      if (what == "columns") 
+      {
+        
+      columnresponse [2 * i] = jsonobject[i].link.replace(/ /g,"%20");
+      columnresponse [2 * i +1] = jsonobject[i].title;
+      }
+      else
+      {
+      /* export non space %20-link json */          
+       jsonobject[i].link = encodeURI(jsonobject[i].link).replace(/%2520/g,"%20");;
+      }
+      
+    }
+  }
+           
+  
+    catch (error)
+    {
+     columnresponse[0] = "Ha sucker.";
+     jsonobject[i].title = "Ha sucker, you suck.";
+    }
+  
+  
+    finally
+    {
+      if (what == "columns")
+      {
+        return columnresponse; 
+      }
+      else
+      {
+      return Utilities.jsonStringify(jsonobject);
+      }
+    }
+  
+}  

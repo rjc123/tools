@@ -1,0 +1,49 @@
+// Vertical merge for empty rows
+function VMergeRC() {          //Vertical Merge "REMOTE CONTROL for GDS"
+  
+  var maxw=l=0;
+  var minw=Number.MAX_VALUE;
+  var al=arguments.length ;
+  
+  //verify all arguments have proper width dimensions
+  for( i=0 ; i<al ; i++){
+    if( arguments[i].constructor == Array ) l=arguments[i][0].length ;
+    else if (arguments[i].length!=0) l = 1 ;  // literal values count as array with a width of one cell, empty cells are ignored!
+    maxw=l>maxw?l:maxw;
+    minw=l<minw?l:minw;
+  }
+  
+  //append each
+  if( maxw==minw) { /* when largest width equals smallest width all are equal */
+    var s = new Array();
+    for( i=0 ; i<al ; i++){
+      if( arguments[i].constructor == Array ) s = s.concat( arguments[i].slice() ) ;
+      else if (arguments[i].length!=0) s = s.concat( [[arguments[i]]] )  
+    }
+
+
+    var t = new Array();
+    var keepit = 0;
+    var c = 0;
+    al =s.length
+    
+    for (i=0; i<al; i++) {           // loop through the rows in s
+      t[c] = s[i] ;                  // add working row to t
+      c++;                           // increment t controller
+
+      for (j in s[i]) {              // loop through the columns in s[i]
+
+        if (s[i][j].length > 0) keepit++  ;    // length > 0  in any entry == we want to keep this row!
+    
+      }
+      
+      if (keepit == 0) {              // check if we want to keep? If so, decrement c controller to overwrite.
+        s[i][0] = "End of Data"       
+        c-- }
+     
+      keepit = 0 ;
+    }
+  if ( s.length == 0 ) return null ; else return t //s      
+  }
+  else return "#N/A: All data ranges must be of equal width!"      
+}
