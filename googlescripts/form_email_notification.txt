@@ -1,0 +1,22 @@
+function FormEmail(e) {
+  //Information : http://justdocsit.blogspot.com/2012/03/google-formulaire-recevoir-un-email.html
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var email = "graham.francis@digital.cabinet-office.gov.uk"; //Remplacer EMAIL par votre email | Replace EMAIL by your email
+  var sheetform = ss.getSheetByName("Form Responses"); //Feuille1 = nom de la feuille qui contient les résultats | Name of the sheet which contains the results
+  //Replace Feuille1 if the sheet have another name.
+  var i = 0; var html = "";
+  try{
+  while(sheetform.getRange(1,2+i).getValue() != ""){
+    //L'ordre des questions dans l'email correspond à l'ordre des colonnes dans la feuille
+    //The questions order in the email will be the order of the column in the sheet
+    html = html + "<p><b>Q : </b>" + sheetform.getRange(1,2+i).getValue() + "<br>";
+    html = html + "<b>R : </b>" + e.namedValues[sheetform.getRange(1,2+i).getValue()] + "</p>";
+    i++;
+  }
+  }catch(e){
+    //Si le script rencontre une erreur un email est envoyé.
+    //If the script encounter an error an email is sent.
+    MailApp.sendEmail(email, "Error in sending the responses to your form " + ss.getName(),e.message);
+  }
+   MailApp.sendEmail(email, "New response to your form " + ss.getName() + " @ "+ e.values[0], html,{htmlBody: html});
+}
