@@ -1,7 +1,7 @@
 function FormEmail(e) {
   //Information : http://justdocsit.blogspot.com/2012/03/google-formulaire-recevoir-un-email.html
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var email = "graham.francis@digital.cabinet-office.gov.uk"; //Remplacer EMAIL par votre email | Replace EMAIL by your email
+  var email = “email.name@domain.com"; //Remplacer EMAIL par votre email | Replace EMAIL by your email
   var sheetform = ss.getSheetByName("Form Responses"); //Feuille1 = nom de la feuille qui contient les résultats | Name of the sheet which contains the results
   //Replace Feuille1 if the sheet have another name.
   var i = 0; var html = "";
