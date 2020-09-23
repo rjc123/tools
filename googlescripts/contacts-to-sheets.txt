@@ -1,0 +1,47 @@
+function onOpen() {
+  var ui = SpreadsheetApp.getUi();
+  var menu = ui.createMenu('Emails')
+  var item = menu.addItem('Extract Emails','myFunction')
+  var item = menu.addItem('Delete Emails','clearRange')
+  
+      .addToUi();
+}
+
+
+function myFunction() {
+  // Use sheet
+  var ss = SpreadsheetApp.getActiveSheet();
+  // Gmail query
+  var query = "-label:COMPLETED";
+  // Search in Gmail, bind to array
+  var threads = GmailApp.search(query);
+  // Loop through query results
+  for (var i = 0; i < threads.length; i++)
+  {
+    // Get messages in thread, add to array
+    var messages = threads[i].getMessages();
+
+    // Used to find max index in array
+    var max = messages[0];
+    var maxIndex = 0;
+
+    // Loop through array to find maxIndexD = most recent mail
+    for (var j = 0; j < messages.length; j++) {
+      if (messages[j] > max) {
+        maxIndex = j;
+        max = messages[j];
+      }
+    } 
+    // Find data
+    var mId = messages[maxIndex].getId() // ID used to create mail link
+    var from = messages[maxIndex].getFrom();
+    var cc = messages[maxIndex].getCc();
+    var time = messages[maxIndex].getDate()
+    var sub = messages[maxIndex].getSubject();
+
+    messages[maxIndex].getThread().addLabel(GmailApp.getUserLabelByName("COMPLETED"))
+    
+    // Write data to sheet
+    ss.appendRow([from, cc, time, sub, 'https://mail.google.com/mail/u/0/#inbox/'+mId])
+  }
+}​
